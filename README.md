@@ -7,3 +7,6 @@ https://www.kaggle.com/datasets/aharless/tweet-files-for-gender-guessing/data
 
 we are using naive bayes to classifier model.
 
+
+
+
