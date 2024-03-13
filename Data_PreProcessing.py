@@ -10,7 +10,7 @@ def Preprocess(twitter_data):
 
     for _, row in twitter_data.iterrows():
         sentence = eng_corpus(row['text'])
-        lemmas = [emoji.demojize(token.text) if emoji.demojize(token.text) != token.text else token.lemma_ for token in sentence]
+        lemmas = [emoji.demojize(str(token.text)) if emoji.demojize(token.text) != token.text else token.lemma_ for token in sentence if not token.is_stop and not token.is_punct]
         lemmas = [lem.replace(':', '').replace('_', ' ') for lem in lemmas]
         clean_lemmas = re.sub(r'[\n\t]', ' ', " ".join(lemmas))
         clean_lemmas = re.sub(r'[ ]+', ' ', clean_lemmas)
@@ -22,7 +22,7 @@ def Preprocess(twitter_data):
             'male': row['male']
         })
 
-    return pd.DataFrame(data_clean)  # Create DataFrame once after loop
+    return pd.DataFrame(data_clean) 
 
 
 twitter_data = pd.read_csv("Tweet_data_for_gender_guessing/merged_data.csv")

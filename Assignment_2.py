@@ -38,13 +38,13 @@ male={}
 not_male={}
 for id,row in twitter_data_clean.iterrows():
     if row['male']:
-        for text in row['text'].split(" "):
+        for text in str(row['text']).split(" "):
             if text in male:
                 male[text]=male[text]+1
             else:
                 male[text]=1
     else:
-        for text in row['text'].split(" "):
+        for text in str(row['text']).split(" "):
             if text in not_male:
                 not_male[text]=not_male[text]+1
             else:
@@ -62,5 +62,11 @@ for text in male.keys():
 male_df = pd.DataFrame(list(male.items()), columns=['word', 'count'])
 not_male_df = pd.DataFrame(list(not_male.items()), columns=['word', 'count'])
 
+male_df.drop(index=0,inplace=True)
+not_male_df.drop(index=0,inplace=True)
+
 print(twitter_data_clean.shape[0])
 print(male_df.shape[0],not_male_df.shape[0])
+print(male_df.sort_values(by="count",ascending=False))
+print(not_male_df.sort_values(by="count",ascending=False))
+
