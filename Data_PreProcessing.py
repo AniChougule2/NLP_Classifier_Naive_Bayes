@@ -12,9 +12,9 @@ def Preprocess(twitter_data):
         sentence = eng_corpus(row['text'])
         lemmas = [emoji.demojize(str(token.text)) if emoji.demojize(token.text) != token.text else token.lemma_ for token in sentence if not token.is_stop and not token.is_punct]
         lemmas = [lem.replace(':', '').replace('_', ' ') for lem in lemmas]
-        clean_lemmas = re.sub(r'[\n\t]', ' ', " ".join(lemmas))
+        clean_lemmas = re.sub(r'[\r\n\t]', ' ', " ".join(lemmas))
         clean_lemmas = re.sub(r'[ ]+', ' ', clean_lemmas)
-
+        clean_lemmas=clean_lemmas.strip()
         data_clean.append({
             'id': row['id'],
             'time': row['time'],

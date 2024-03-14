@@ -13,14 +13,15 @@ male = {}
 not_male = {}
 for id, row in twitter_data_clean.iterrows():
     if row['male']:
-        for text in str(row['text']).split(" "):
-            if text  not in male:
-                male[text] = 2
+        for text in list(set(str(row['text']).split(" "))):
+            if text in male:
+                male[text] = male[text]+1
+            else:
+                male[text] = 1
     else:
-        for text in str(row['text']).split(" "):
-            if text not in not_male:
-                not_male[text] = 2
-
+        for text in list(set(str(row['text']).split(" "))):
+            if text in not_male:
+                not_male[text] = not_male[text]+1
 
 for text in not_male.keys():
     if text not in male:
