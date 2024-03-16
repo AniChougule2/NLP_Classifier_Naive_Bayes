@@ -18,22 +18,22 @@ for id,row in twitter_data_clean.iterrows():
             if text in male:
                 male[text]=male[text]+1
             else:
-                male[text]=2
+                male[text]=1
     else:
         for text in str(row['text']).split(" "):
             if text in not_male:
                 not_male[text]=not_male[text]+1
             else:
-                not_male[text]=2
+                not_male[text]=1
 
 
 for text in not_male.keys():
     if text not in male:
-        male[text]=1
+        male[text]=0
 
 for text in male.keys():
     if text not in not_male:
-        not_male[text]=1
+        not_male[text]=0
 
 male_df = pd.DataFrame(list(male.items()), columns=['word', 'count'])
 not_male_df = pd.DataFrame(list(not_male.items()), columns=['word', 'count'])
@@ -53,8 +53,8 @@ print(merge_df.shape[0])
 total_male_count = male_df['count'].sum()
 total_not_male_count = not_male_df['count'].sum()
 
-merge_df['male_probability'] = merge_df['count_male'] / total_male_count
-merge_df['not_male_probability'] = merge_df['count_not_male'] / total_not_male_count
+merge_df['male_probability'] = (merge_df['count_male'] + 1) / (total_male_count + merge_df.shape[0])
+merge_df['not_male_probability'] = (merge_df['count_not_male'] + 1) / (total_not_male_count + merge_df.shape[0])
 
 df_train_probabilty = merge_df
 print(df_train_probabilty.sort_values(by="male_probability",ascending=False))
