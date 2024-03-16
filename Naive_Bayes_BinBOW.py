@@ -79,7 +79,7 @@ for id, row in twitter_test_data_clean.iterrows():
             pred_not_male += np.log(matching_rows['not_male_probability'].iloc[0])
             
     
-    pred_dict = pred_male>pred_not_male
+    pred_dict[id] = pred_male>pred_not_male
 
 pred_df = pd.DataFrame(list(pred_dict.items()), columns=['id', 'Prediction'])
 
