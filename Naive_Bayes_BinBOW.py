@@ -1,9 +1,8 @@
 import pandas as pd
 import numpy as np
 import spacy
-import re
 import emoji
-
+import re
 twitter_data_clean = pd.read_csv("Tweet_data_for_gender_guessing/twitter_train_data_clean.csv")
 
 eng_corpus = spacy.load("en_core_web_sm")
@@ -117,3 +116,37 @@ print(f"Accuracy: {accuracy}")
 
 f_score = 2 * (precision * sensitivity) / (precision + sensitivity)
 print(f"F-score: {f_score}")
+
+def Preprocess(sentence):
+    eng_corpus = spacy.load("en_core_web_sm")
+    data_clean = [] 
+    sentence = eng_corpus(sentence)
+    lemmas = [emoji.demojize(str(token.text)) if emoji.demojize(token.text) != token.text else token.lemma_ for token in sentence if not token.is_stop and not token.is_punct]
+    lemmas = [lem.replace(':', '').replace('_', ' ') for lem in lemmas]
+    clean_lemmas = re.sub(r'[\r\n\t]', ' ', " ".join(lemmas))
+    clean_lemmas = re.sub(r'[ ]+', ' ', clean_lemmas)
+    clean_lemmas=clean_lemmas.strip()
+    predict(clean_lemmas)
+
+
+def predict(sentence):
+    pred_male = np.log(male_prop)
+    pred_not_male = np.log(not_male_prop)    
+    for text in list(set(str(sentence).split(" "))):
+        matching_rows = df_train_probabilty[df_train_probabilty['word'] == text]
+        if not matching_rows.empty:
+            pred_male += np.log(matching_rows['male_probability'].iloc[0])
+            pred_not_male += np.log(matching_rows['not_male_probability'].iloc[0])
+            
+    
+    return "male" if pred_male>pred_not_male else "not_male"
+
+while True:
+    sentence=input("Enter Sentence:")
+    print(predict(sentence))
+    choice=input("Do you want to enter another sentence(Y/n):")
+    if str(choice).lower()=='y':
+        continue
+    else:
+        print("Thank you for using the naive bayes classifier 🥳🥳!!!!!!!")
+        break;
