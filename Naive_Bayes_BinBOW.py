@@ -139,13 +139,16 @@ def predict(sentence):
             pred_not_male += np.log(matching_rows['not_male_probability'].iloc[0])
             
     
-    return "male" if pred_male>pred_not_male else "not_male"
+    return np.exp(pred_male),np.exp(pred_not_male)
 
 while True:
     sentence=input("Enter Sentence:")
-    print(predict(sentence))
+    pred_male,pred_not_male=predict(sentence)
+    print("male |",sentence,"=",pred_male)
+    print("not_male |",sentence,"=",pred_not_male)
+    print('"',sentence,'" was classified as ',"male" if pred_male>pred_not_male else "not_male")
     choice=input("Do you want to enter another sentence(Y/n):")
-    if str(choice).lower()=='y':
+    if str(choice).lower() in ['y','yes']:
         continue
     else:
         print("Thank you for using the naive bayes classifier 🥳🥳!!!!!!!")
