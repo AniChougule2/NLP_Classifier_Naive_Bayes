@@ -27,7 +27,8 @@ def Preprocess(twitter_data):
 
     return pd.DataFrame(data_clean)
 
-
+print("Waradkar Piyush A20513460")
+print("Chougule Aniket A20552758")
 twitter_data = pd.read_csv("Tweet_data_for_gender_guessing/merged_data.csv")
 output_file_path = "Tweet_data_for_gender_guessing/twitter_train_data_clean.csv"
 output_file_path_custome_train_set = "Tweet_data_for_gender_guessing/twitter_train_data_clean_Training_set.csv"
@@ -42,13 +43,13 @@ else:
 # twitter_data_clean = Preprocess(twitter_data)
 # twitter_data_clean.to_csv(output_file_path, index=False)
 print(f"Training set size: {training_size} %")
-training_size = training_size/100
-training_size = int(len(twitter_data)*training_size)
-twitter_data_train = twitter_data.iloc[0:training_size]
-test_size = int(len(twitter_data) * 0.8)+1
-twitter_data_test = twitter_data.iloc[test_size:-1]
-print(len(twitter_data_train), len(twitter_data_test), len(twitter_data))
-print(training_size, test_size)
+training_fraction = training_size / 100
+num_training_samples = int(len(twitter_data) * training_fraction)
+twitter_data_train = twitter_data.iloc[:num_training_samples]
+test_start_index = len(twitter_data) - int(len(twitter_data) * 0.2)
+twitter_data_test = twitter_data.iloc[test_start_index:]
+# print(len(twitter_data_train), len(twitter_data_test), len(twitter_data))
+# print(training_size, test_size)
 twitter_data_train = Preprocess(twitter_data_train)
 twitter_data_test = Preprocess(twitter_data_test)
 
@@ -57,7 +58,7 @@ eng_corpus = spacy.load("en_core_web_sm")
 
 male = {}
 not_male = {}
-for id, row in twitter_data.iterrows():
+for id, row in twitter_data_train.iterrows():
     if row['male']:
         for text in list(set(str(row['text']).split(" "))):
             if text in male:
@@ -85,15 +86,15 @@ not_male_df = pd.DataFrame(list(not_male.items()), columns=['word', 'present'])
 male_df.drop(index=0, inplace=True)
 not_male_df.drop(index=0, inplace=True)
 
-print(twitter_data.shape[0])
-print(male_df.shape[0], not_male_df.shape[0])
-print(male_df.head())
-print(not_male_df.head())
+# print(twitter_data.shape[0])
+# print(male_df.shape[0], not_male_df.shape[0])
+# print(male_df.head())
+# print(not_male_df.head())
 
 merge_df = pd.merge(male_df, not_male_df, on="word",
                     suffixes=("_male", "_not_male"))
-print(merge_df.head())
-print(merge_df.shape[0])
+# print(merge_df.head())
+# print(merge_df.shape[0])
 
 total_male_count = male_df['present'].sum()
 total_not_male_count = not_male_df['present'].sum()
@@ -104,13 +105,13 @@ merge_df['not_male_probability'] = (
     merge_df['present_not_male'] + 1) / (total_not_male_count + merge_df.shape[0])
 
 df_train_probabilty = merge_df
-print(df_train_probabilty.sort_values(by="male_probability", ascending=False).head())
+# print(df_train_probabilty.sort_values(by="male_probability", ascending=False).head())
 
 male_prop = twitter_data['male'].mean()
 not_male_prop = 1 - male_prop
 
-print(male_prop)
-print(not_male_prop)
+# print(male_prop)
+# print(not_male_prop)
 
 
 pred_dict = {}
@@ -130,12 +131,12 @@ for id, row in twitter_data_test.iterrows():
 
 pred_df = pd.DataFrame(list(pred_dict.items()), columns=['id', 'Prediction'])
 
-print(pred_df.head())
-print(twitter_data_test.head())
+# print(pred_df.head())
+# print(twitter_data_test.head())
 
 twitter_data_test['Prediction'] = pred_df['Prediction'].values
 
-print(twitter_data_test.head(20))
+# print(twitter_data_test.head(20))
 
 TP = ((twitter_data_test['Prediction'] == True) & (
     twitter_data_test['male'] == True)).sum()
@@ -196,10 +197,10 @@ def predict(sentence):
 
 
 while True:
-    sentence = input("Enter your sentence:\n\nSentence S:\n")
+    sentence = input("Enter your sentence: ")
     pred_male, pred_not_male = predict(sentence)
     class_label = "male" if pred_male > pred_not_male else "not_male"
-
+    print("Sentence S:")
     print(f"\n{sentence}\n")
     print(f"was classified as {class_label}.")
     print(f"P(male | S) = {pred_male}")
