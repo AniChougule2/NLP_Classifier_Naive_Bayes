@@ -30,8 +30,6 @@ def Preprocess(twitter_data):
 print("Waradkar Piyush A20513460")
 print("Chougule Aniket A20552758")
 twitter_data = pd.read_csv("Tweet_data_for_gender_guessing/merged_data.csv")
-output_file_path = "Tweet_data_for_gender_guessing/twitter_train_data_clean.csv"
-output_file_path_custome_train_set = "Tweet_data_for_gender_guessing/twitter_train_data_clean_Training_set.csv"
 if len(sys.argv) == 2 :
     training_size = sys.argv[1]
     if not training_size.isdigit() or not 20 <= int(training_size) <= 80:

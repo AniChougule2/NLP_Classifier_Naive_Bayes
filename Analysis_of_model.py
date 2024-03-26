@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
-
+import pandas as pd
+import plotly.express as px
 
 data = {
     '80% Training': {'TP': 3133, 'TN': 3324, 'FP': 2243, 'FN': 2402},
@@ -46,3 +47,61 @@ plt.ylabel('True Positive Rate (TPR)')
 plt.legend()
 plt.grid(True)
 plt.show()
+
+
+twitter_data = pd.read_csv("Tweet_data_for_gender_guessing/merged_data.csv")
+
+training_size = 80
+num_training_samples = int(len(twitter_data) * 0.8)
+twitter_data_train = twitter_data.iloc[:num_training_samples]
+twitter_data_test = twitter_data.iloc[num_training_samples:]
+
+print("Total data = ",len(twitter_data))
+print("Total data males = ",len(twitter_data[twitter_data['male']== True]))
+print("Total data not_males = ",len(twitter_data[twitter_data['male']== False]))
+print("Train data = ", len(twitter_data_train))
+print("Train data males = ", len(twitter_data_train[twitter_data_train['male'] == True]))
+print("Train data not_males = ", len(twitter_data_train[twitter_data_train['male'] == False]))
+print("Test data = ", len(twitter_data_test))
+print("Total data males = ", len(twitter_data_test[twitter_data_test['male'] == True]))
+print("Total data not_males = ", len(twitter_data_test[twitter_data_test['male'] == False]))
+
+total_data = len(twitter_data)
+total_data_males = len(twitter_data[twitter_data['male'] == True])
+total_data_not_males = len(twitter_data[twitter_data['male'] == False])
+train_data = len(twitter_data_train)
+train_data_males = len(twitter_data_train[twitter_data_train['male'] == True])
+train_data_not_males = len(
+    twitter_data_train[twitter_data_train['male'] == False])
+test_data = len(twitter_data_test)
+test_data_males = len(twitter_data_test[twitter_data_test['male'] == True])
+test_data_not_males = len(
+    twitter_data_test[twitter_data_test['male'] == False])
+
+
+# Creating a DataFrame to hold the data for plotting
+data = {
+    'Dataset': ['Total', 'Training', 'Test'],
+    'Males': [total_data_males, train_data_males, test_data_males],
+    'Not Males': [total_data_not_males, train_data_not_males, test_data_not_males]
+}
+
+df = pd.DataFrame(data)
+
+
+df_melted = df.melt(id_vars=['Dataset'], var_name='Gender', value_name='Count')
+
+fig = px.bar(df_melted, x='Dataset', y='Count', color='Gender', barmode='group',
+             title="Label Distribution Across Datasets",
+             labels={'Count': 'Number of Samples', 'Gender': 'Label'},
+             text='Count')
+
+
+fig.update_traces(texttemplate='%{text}', textposition='outside')
+
+
+fig.update_layout(xaxis_title='Dataset',
+                  yaxis_title='Number of Samples',
+                  legend_title='Label',
+                  uniformtext_minsize=8)
+fig.show()
