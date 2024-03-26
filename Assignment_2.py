@@ -178,7 +178,7 @@ def Preprocess(sentence):
     clean_lemmas = re.sub(r'[\r\n\t]', ' ', " ".join(lemmas))
     clean_lemmas = re.sub(r'[ ]+', ' ', clean_lemmas)
     clean_lemmas = clean_lemmas.strip()
-    predict(clean_lemmas)
+    return predict(clean_lemmas)
 
 
 def predict(sentence):
@@ -191,12 +191,12 @@ def predict(sentence):
             pred_not_male += np.log(
                 matching_rows['not_male_probability'].iloc[0])
 
-    return np.exp(pred_male), np.exp(pred_not_male)
+    return np.exp(pred_male), np.exp(pred_not_male),sentence
 
 
 while True:
     sentence = input("Enter your sentence: ")
-    pred_male, pred_not_male = predict(sentence)
+    pred_male, pred_not_male,sentence = Preprocess(sentence)
     class_label = "male" if pred_male > pred_not_male else "not_male"
     print("Sentence S:")
     print(f"\n{sentence}\n")
