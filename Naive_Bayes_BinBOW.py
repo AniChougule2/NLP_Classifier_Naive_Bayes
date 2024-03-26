@@ -3,7 +3,7 @@ import numpy as np
 import spacy
 import emoji
 import re
-twitter_data_clean = pd.read_csv("Tweet_data_for_gender_guessing/twitter_train_data_clean.csv")
+twitter_data_clean = pd.read_csv("Tweet_data_for_gender_guessing/merged_data.csv")
 
 eng_corpus = spacy.load("en_core_web_sm")
 
@@ -118,15 +118,14 @@ f_score = 2 * (precision * sensitivity) / (precision + sensitivity)
 print(f"F-score: {f_score}")
 
 def Preprocess(sentence):
-    eng_corpus = spacy.load("en_core_web_sm")
-    data_clean = [] 
+    eng_corpus = spacy.load("en_core_web_sm") 
     sentence = eng_corpus(sentence)
     lemmas = [emoji.demojize(str(token.text)) if emoji.demojize(token.text) != token.text else token.lemma_ for token in sentence if not token.is_stop and not token.is_punct]
     lemmas = [lem.replace(':', '').replace('_', ' ') for lem in lemmas]
     clean_lemmas = re.sub(r'[\r\n\t]', ' ', " ".join(lemmas))
     clean_lemmas = re.sub(r'[ ]+', ' ', clean_lemmas)
     clean_lemmas=clean_lemmas.strip()
-    predict(clean_lemmas)
+    return predict(clean_lemmas)
 
 
 def predict(sentence):
@@ -139,11 +138,11 @@ def predict(sentence):
             pred_not_male += np.log(matching_rows['not_male_probability'].iloc[0])
             
     
-    return np.exp(pred_male),np.exp(pred_not_male)
+    return np.exp(pred_male),np.exp(pred_not_male),sentence
 
 while True:
     sentence=input("Enter Sentence:")
-    pred_male,pred_not_male=predict(sentence)
+    pred_male,pred_not_male,sentence=Preprocess(sentence)
     print("male |",sentence,"=",pred_male)
     print("not_male |",sentence,"=",pred_not_male)
     print('"',sentence,'" was classified as ',"male" if pred_male>pred_not_male else "not_male")

@@ -9,7 +9,7 @@ data = {
 }
 
 
-fig, axes = plt.subplots(1, 3, figsize=(18, 6))
+fig, axes = plt.subplots(1, 3, figsize=(16, 6))
 titles = ['80% Training', '50% Training', '30% Training']
 for ax, title in zip(axes, titles):
     TP, TN, FP, FN = data[title].values()

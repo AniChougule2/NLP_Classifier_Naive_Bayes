@@ -5,7 +5,7 @@ import re
 import emoji
 
 
-twitter_data_clean=pd.read_csv("Tweet_data_for_gender_guessing/twitter_train_data_clean.csv")
+twitter_data_clean=pd.read_csv("Tweet_data_for_gender_guessing/merged_data.csv")
 
 eng_corpus=spacy.load("en_core_web_sm")
 
